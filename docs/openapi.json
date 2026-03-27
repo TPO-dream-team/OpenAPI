@@ -1,9 +1,14 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "Gore",
+    "title": "Gore API specification",
     "version": "v1.0"
   },
+  "servers": [
+    {
+      "url": "http://localhost:5148/"
+    }
+  ],
   "paths": {
     "/mountain": {
       "get": {
@@ -1222,6 +1227,88 @@
           }
         }
       }
+    },
+    "/moderator/train": {
+      "post": {
+        "tags": [
+          "Moderator"
+        ],
+        "summary": "Submits a manual classification for a message to be used as AI training data.",
+        "parameters": [
+          {
+            "name": "messageId",
+            "in": "query",
+            "description": "The unique ID of the message.",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          },
+          {
+            "name": "isSpam",
+            "in": "query",
+            "description": "True if the message is spam, false otherwise.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Label submitted successfully."
+          },
+          "404": {
+            "description": "Message ID not found.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/moderator/ambiguous-messages": {
+      "get": {
+        "tags": [
+          "Moderator"
+        ],
+        "summary": "Retrieves messages where the AI confidence is low and requires human moderation.",
+        "responses": {
+          "200": {
+            "description": "Returns the list of ambiguous messages."
+          }
+        }
+      }
+    },
+    "/moderator/metrics": {
+      "get": {
+        "tags": [
+          "Moderator"
+        ],
+        "summary": "Returns the current performance metrics (F1, Recall, Precision) for the spam filter.",
+        "responses": {
+          "200": {
+            "description": "Returns the classification report."
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1768,7 +1855,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ],
   "tags": [
@@ -1783,6 +1870,9 @@
     },
     {
       "name": "Board"
+    },
+    {
+      "name": "Moderator"
     }
   ]
 }
