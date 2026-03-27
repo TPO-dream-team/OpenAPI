@@ -4,11 +4,6 @@
     "title": "Gore",
     "version": "v1.0"
   },
-  "servers": [
-    {
-      "url": "http://localhost:5148/"
-    }
-  ],
   "paths": {
     "/mountain": {
       "get": {
